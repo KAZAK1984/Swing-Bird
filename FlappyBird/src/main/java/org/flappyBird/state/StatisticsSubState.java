@@ -13,25 +13,26 @@ public class StatisticsSubState implements IState
 
     @Override public void onEnter()
     {
-        // Получаем статистику из файла
-        /* инициализация */
+        // TODO: Получаем статистику из файла
+
+        // TODO: инициализация
     }
     @Override public void onExit()
     {
-        /* очистка */
+        // TODO: очистка
     }
 
     @Override
-    public void update(double delta)
+    public void update(double delta, int targetFPS)
     {
-        // Вывод статистики
-        // при выходе: мягко перезапустить рендеринг родителя без потери данных, изменить subState в нём на NONE
+        // TODO: Вывод статистики
+        //  при выходе: мягко перезапустить рендеринг родителя без потери данных, изменить subState в нём на NONE
     }
 
     @Override
     public void render(Graphics2D g)
     {
-        // отрисовка поверх родительского состояния
+        // TODO: отрисовка поверх родительского состояния
     }
 }
 

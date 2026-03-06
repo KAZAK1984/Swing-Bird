@@ -1,23 +1,45 @@
 package org.flappyBird;
 
+import org.flappyBird.state.MenuState;
+import org.flappyBird.state.StateController;
+
+import java.awt.*;
+import java.time.Duration;
+import java.time.Instant;
+
 public class Scene
 {
-    private int width;
-    private int height;
+    private final StateController stateController;
 
-    public Scene(int width, int height)
+    public Scene()
     {
-        this.width = width;
-        this.height = height;
+        stateController = new StateController();
+        stateController.setState(new MenuState(stateController));
+
+        GameLoop();
     }
 
-    public int getWidth()
+    private void GameLoop()
     {
-        return width;
-    }
+        final int TARGET_FPS = 120;
+        var lastTime = Instant.now();
 
-    public int getHeight()
-    {
-        return height;
+        for (;;)
+        {
+            long delta = Duration.between(lastTime, Instant.now()).toMillis();
+
+            try
+            {
+                stateController.update(delta, TARGET_FPS);
+                // TODO: render
+            }
+            catch (Exception e)
+            {
+                // TODO: Вывод ошибки в мелком окошке а-ля winError
+                break;
+            }
+
+            lastTime = Instant.now();
+        }
     }
 }

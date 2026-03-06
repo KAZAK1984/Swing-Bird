@@ -8,19 +8,23 @@ public class StateController
 
     public void setState(IState newState)
     {
-        if (currentState != null) currentState.onExit();
+        if (currentState != null)
+            currentState.onExit();
+
         currentState = newState;
         currentState.onEnter();
     }
 
-    public void update(double delta)
+    public void update(double delta, int targetFPS)
     {
-        if (currentState != null) currentState.update(delta);
+        if (currentState != null)
+            currentState.update(delta, targetFPS);
     }
 
     public void render(Graphics2D g)
     {
-        if (currentState != null) currentState.render(g);
+        if (currentState != null)
+            currentState.render(g);
     }
 }
 

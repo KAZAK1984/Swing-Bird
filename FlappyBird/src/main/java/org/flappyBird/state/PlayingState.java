@@ -14,25 +14,25 @@ public class PlayingState implements IState
 
     @Override public void onEnter()
     {
-        /* инициализация */
+        // TODO: инициализация
     }
     @Override public void onExit()
     {
-        /* очистка */
+        // TODO: очистка
     }
 
     @Override
-    public void update(double delta)
+    public void update(double delta, int targetFPS)
     {
-        // логика игры
-        // при проигрыше: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном GameOverSubState через это состояние
-        // при паузе: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном PauseSubState через это состояние
+        // TODO: логика игры
+        //  при проигрыше: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном GameOverSubState через это состояние
+        //  при паузе: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном PauseSubState через это состояние
     }
 
     @Override
     public void render(Graphics2D g)
     {
-        // отрисовка
+        // TODO: отрисовка
     }
 }
 

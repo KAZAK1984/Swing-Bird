@@ -14,25 +14,25 @@ public class MenuState implements IState
 
     @Override public void onEnter()
     {
-        /* инициализация */
+        // TODO: инициализация
     }
     @Override public void onExit()
     {
-        /* очистка */
+        // TODO: очистка
     }
 
     @Override
-    public void update(double delta)
+    public void update(double delta, int targetFPS)
     {
-        // логика меню
-        // при нажатии на "Старт": controller.setState(new PlayingState(controller)));
-        // при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
+        // TODO: логика меню
+        //  при нажатии на "Старт": controller.setState(new PlayingState(controller)));
+        //  при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
     }
 
     @Override
     public void render(Graphics2D g)
     {
-        // Отрисовка
+        // TODO: Отрисовка
     }
 }
 
