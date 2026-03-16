@@ -3,43 +3,86 @@ package org.flappyBird;
 import org.flappyBird.state.MenuState;
 import org.flappyBird.state.StateController;
 
+import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 
 public class Scene
 {
+    private static final int TARGET_FPS = 120;
+    private static final long OPTIMAL_NANOS = 1_000_000_000L / TARGET_FPS;
+
     private final StateController stateController;
+    private final JPanel view;
+    private volatile boolean running;
 
     public Scene()
     {
         stateController = new StateController();
         stateController.setState(new MenuState(stateController));
 
-        GameLoop();
+        view = new JPanel()
+        {
+            @Override
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                stateController.render((Graphics2D) g);
+            }
+        };
     }
 
-    private void GameLoop()
+    public JComponent getView()
     {
-        final int TARGET_FPS = 120;
+        return view;
+    }
+
+    public void start()
+    {
+        if (running)
+            return;
+
+        running = true;
+        Thread gameThread = new Thread(this::gameLoop, "game-loop");
+        gameThread.setDaemon(true);
+        gameThread.start();
+    }
+
+    private void gameLoop()
+    {
         var lastTime = Instant.now();
 
-        for (;;)
+        while (running)
         {
             long delta = Duration.between(lastTime, Instant.now()).toMillis();
+            lastTime = Instant.now();
 
             try
             {
                 stateController.update(delta, TARGET_FPS);
-                // TODO: render
+                SwingUtilities.invokeLater(view::repaint);
             }
             catch (Exception e)
             {
-                // TODO: Вывод ошибки в мелком окошке а-ля winError
-                break;
+                e.printStackTrace();
+                running = false;
             }
 
-            lastTime = Instant.now();
+            long frameNanos = Duration.between(lastTime, Instant.now()).toNanos();
+            long sleepNanos = OPTIMAL_NANOS - frameNanos;
+            if (sleepNanos > 0)
+            {
+                try
+                {
+                    Thread.sleep(sleepNanos / 1_000_000, (int)(sleepNanos % 1_000_000));
+                }
+                catch (InterruptedException e)
+                {
+                    Thread.currentThread().interrupt();
+                    running = false;
+                }
+            }
         }
     }
 }

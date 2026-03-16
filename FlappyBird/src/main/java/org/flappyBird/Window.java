@@ -5,6 +5,8 @@ import java.awt.*;
 
 public class Window extends JFrame
 {
+    private final Scene scene;
+
     public Window()
     {
         setTitle("Flappy Bird");
@@ -12,15 +14,19 @@ public class Window extends JFrame
         setResizable(true);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        scene = new Scene();
+        JComponent view = scene.getView();
+        view.setPreferredSize(new Dimension((int) screenSize.getWidth() / 2, (int) screenSize.getHeight() / 2));
+
+        add(view, BorderLayout.CENTER);
         pack();
-        setMinimumSize(new Dimension((int)screenSize.getWidth() / 2,(int)screenSize.getHeight() / 2));
-        setMaximumSize(screenSize);
-        setSize(screenSize);
         setLocationRelativeTo(null);
     }
 
     public void display()
     {
         setVisible(true);
+        scene.start();
     }
 }
