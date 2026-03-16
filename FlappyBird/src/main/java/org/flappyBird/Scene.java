@@ -1,12 +1,13 @@
 package org.flappyBird;
 
+import org.flappyBird.render.*;
 import org.flappyBird.state.MenuState;
 import org.flappyBird.state.StateController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.Duration;
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Scene
 {
@@ -14,13 +15,20 @@ public class Scene
     private static final long OPTIMAL_NANOS = 1_000_000_000L / TARGET_FPS;
 
     private final StateController stateController;
+    private final MasterRenderer masterRenderer;
     private final JPanel view;
+
     private volatile boolean running;
+    private volatile List<IRenderCmd> renderSnapshot = new ArrayList<>();
+
+    private List<IRenderCmd> activeBuffer = new ArrayList<>(50);
+    private List<IRenderCmd> snapshotBuffer = new ArrayList<>(50);
 
     public Scene()
     {
+        masterRenderer = new MasterRenderer();
         stateController = new StateController();
-        stateController.setState(new MenuState(stateController));
+        stateController.pushState(new MenuState(stateController));
 
         view = new JPanel()
         {
@@ -28,7 +36,7 @@ public class Scene
             protected void paintComponent(Graphics g)
             {
                 super.paintComponent(g);
-                stateController.render((Graphics2D) g);
+                masterRenderer.renderFrame((Graphics2D) g, renderSnapshot);
             }
         };
     }
@@ -40,10 +48,9 @@ public class Scene
 
     public void start()
     {
-        if (running)
-            return;
-
+        if (running) return;
         running = true;
+
         Thread gameThread = new Thread(this::gameLoop, "game-loop");
         gameThread.setDaemon(true);
         gameThread.start();
@@ -51,36 +58,52 @@ public class Scene
 
     private void gameLoop()
     {
-        var lastTime = Instant.now();
+        long lastTime = System.nanoTime();
 
         while (running)
         {
-            long delta = Duration.between(lastTime, Instant.now()).toMillis();
-            lastTime = Instant.now();
+            long now = System.nanoTime();
+            double  deltaNanos = now - lastTime;
+            lastTime = now;
+            double deltaMillis = deltaNanos / 1_000_000;
 
-            try
+            synchronized (stateController)
             {
-                stateController.update(delta, TARGET_FPS);
-                SwingUtilities.invokeLater(view::repaint);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                running = false;
+                activeBuffer.clear();
+                stateController.update(deltaMillis);
+                stateController.buildFrame(activeBuffer, view.getWidth(), view.getHeight());
             }
 
-            long frameNanos = Duration.between(lastTime, Instant.now()).toNanos();
-            long sleepNanos = OPTIMAL_NANOS - frameNanos;
+            List<IRenderCmd> temp = snapshotBuffer;
+            snapshotBuffer = activeBuffer;
+            activeBuffer = temp;
+
+            renderSnapshot = snapshotBuffer;
+            SwingUtilities.invokeLater(view::repaint);
+
+            long elapsedNanos = System.nanoTime() - lastTime;
+            long sleepNanos = OPTIMAL_NANOS - elapsedNanos;
+
             if (sleepNanos > 0)
             {
-                try
+                long sleepMillis = (sleepNanos / 1_000_000) - 2;
+                if (sleepMillis > 0)
                 {
-                    Thread.sleep(sleepNanos / 1_000_000, (int)(sleepNanos % 1_000_000));
+                    try
+                    {
+                        Thread.sleep(sleepMillis);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        Thread.currentThread().interrupt();
+                        running = false;
+                    }
                 }
-                catch (InterruptedException e)
+
+                long targetTime = lastTime + OPTIMAL_NANOS;
+                while (System.nanoTime() < targetTime)
                 {
-                    Thread.currentThread().interrupt();
-                    running = false;
+                    Thread.onSpinWait();
                 }
             }
         }

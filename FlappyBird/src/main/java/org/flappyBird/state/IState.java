@@ -1,11 +1,13 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.IRenderCmd;
+
+import java.util.List;
 
 public interface IState
 {
-    void update(double delta, int targetFPS);
-    void render(Graphics2D g);
+    void update(double deltaMillis);
+    void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight);
     void onEnter();
     void onExit();
 }

@@ -1,11 +1,12 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.*;
+
+import java.util.List;
 
 public class MenuState implements IState
 {
     private final StateController controller;
-    private IState subState = null;
 
     public MenuState(StateController controller)
     {
@@ -22,17 +23,17 @@ public class MenuState implements IState
     }
 
     @Override
-    public void update(double delta, int targetFPS)
+    public void update(double deltaMillis)
     {
         // TODO: логика меню
-        //  при нажатии на "Старт": controller.setState(new PlayingState(controller)));
+        //  при нажатии на "Старт": controller.setState(new PlayingState(controller));
         //  при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
     }
 
     @Override
-    public void render(Graphics2D g)
+    public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
-        // TODO: Отрисовка
+        buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
+        buffer.add(new CmdText("Flappy Bird", canvasWidth / 2, canvasHeight / 2, 0xFFFFFF));
     }
 }
-

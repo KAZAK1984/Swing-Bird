@@ -1,30 +1,54 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.IRenderCmd;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 public class StateController
 {
-    private IState currentState;
+    private final Deque<IState> states = new ArrayDeque<>();
 
     public void setState(IState newState)
     {
-        if (currentState != null)
-            currentState.onExit();
-
-        currentState = newState;
-        currentState.onEnter();
+        while (!states.isEmpty())
+        {
+            states.pop().onExit();
+        }
+        pushState(newState);
     }
 
-    public void update(double delta, int targetFPS)
+    public void pushState(IState newState)
     {
-        if (currentState != null)
-            currentState.update(delta, targetFPS);
+        states.push(newState);
+        newState.onEnter();
     }
 
-    public void render(Graphics2D g)
+    public void popState()
     {
-        if (currentState != null)
-            currentState.render(g);
+        if (!states.isEmpty())
+        {
+            states.pop().onExit();
+        }
+    }
+
+    public void update(double deltaMillis)
+    {
+        IState current = states.peek();
+        if (current != null)
+        {
+            current.update(deltaMillis);
+        }
+    }
+
+    public void buildFrame(List<IRenderCmd> buffer, int width, int height)
+    {
+        Iterator<IState> iterator = states.descendingIterator();
+        while (iterator.hasNext())
+        {
+            iterator.next().buildFrame(buffer, width, height);
+        }
     }
 }
-

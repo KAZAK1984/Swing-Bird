@@ -1,14 +1,16 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.*;
+import java.util.List;
 
-public class PauseSubState implements IState
+public class GameOverState implements IState
 {
     private final StateController controller;
 
-    public PauseSubState(StateController controller)
+    public GameOverState(StateController controller)
     {
         this.controller = controller;
+        // TODO: сохранение информации о счёте при его появлении
     }
 
     @Override public void onEnter()
@@ -21,16 +23,15 @@ public class PauseSubState implements IState
     }
 
     @Override
-    public void update(double delta, int targetFPS)
+    public void update(double deltaMillis)
     {
-        // TODO: логика меню
+        // TODO: логика меню конца игры
         //  при повторе: изменить мейн состояние на PlayingState
         //  при выходе в меню: изменить мейн состояние на MenuState
-        //  при возобновлении: мягко перезапустить рендеринг родителя без потери данных, изменить subState в нём на NONE
     }
 
     @Override
-    public void render(Graphics2D g)
+    public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
         // TODO: отрисовка поверх родительского состояния
     }

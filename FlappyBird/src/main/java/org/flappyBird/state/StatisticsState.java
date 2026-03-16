@@ -1,12 +1,14 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.*;
 
-public class StatisticsSubState implements IState
+import java.util.List;
+
+public class StatisticsState implements IState
 {
     private final StateController controller;
 
-    public StatisticsSubState(StateController controller)
+    public StatisticsState(StateController controller)
     {
         this.controller = controller;
     }
@@ -23,14 +25,14 @@ public class StatisticsSubState implements IState
     }
 
     @Override
-    public void update(double delta, int targetFPS)
+    public void update(double deltaMillis)
     {
         // TODO: Вывод статистики
         //  при выходе: мягко перезапустить рендеринг родителя без потери данных, изменить subState в нём на NONE
     }
 
     @Override
-    public void render(Graphics2D g)
+    public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
         // TODO: отрисовка поверх родительского состояния
     }

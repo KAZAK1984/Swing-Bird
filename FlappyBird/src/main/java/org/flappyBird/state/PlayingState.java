@@ -1,18 +1,22 @@
 package org.flappyBird.state;
 
-import java.awt.*;
+import org.flappyBird.render.*;
+
+import java.util.List;
 
 public class PlayingState implements IState
 {
     private final StateController controller;
-    private IState subState = null;
+    private int birdX = 120;
+    private int birdY = 200;
+    private int score = 0;
 
     public PlayingState(StateController controller)
     {
         this.controller = controller;
     }
 
-    @Override public void onEnter()
+    @Override public void onEnter() 
     {
         // TODO: инициализация
     }
@@ -22,17 +26,21 @@ public class PlayingState implements IState
     }
 
     @Override
-    public void update(double delta, int targetFPS)
+    public void update(double deltaMillis)
     {
+        birdY += (int)(0.5 * deltaMillis);
         // TODO: логика игры
         //  при проигрыше: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном GameOverSubState через это состояние
         //  при паузе: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном PauseSubState через это состояние
     }
 
     @Override
-    public void render(Graphics2D g)
+    public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
-        // TODO: отрисовка
+        buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
+
+        buffer.add(new CmdSprite(1, birdX, birdY, 0f));
+
+        buffer.add(new CmdText("Score: " + score, 20, 30, 0xFFFFFF));
     }
 }
-
