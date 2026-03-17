@@ -44,7 +44,7 @@ public class PlayingState implements IState
     {
         buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
 
-        buffer.add(new CmdSprite(SpriteType.BIRD, birdX, birdY, 0f, 0));
+        buffer.add(new CmdSprite(SpriteType.BIRD, birdX, birdY, 0f));
 
         buffer.add(new CmdText("Score: " + score, 20, 30, 0xFFFFFF));
     }

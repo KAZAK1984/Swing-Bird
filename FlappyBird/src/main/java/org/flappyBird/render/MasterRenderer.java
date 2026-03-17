@@ -40,28 +40,32 @@ public class MasterRenderer
         switch (s.spriteType())
         {
             case BIRD:
+                // Тело
                 g.setColor(new Color(0xFFE178));
                 g.fillRect(-14, -10, 28, 20);
 
+                // Клюв
                 g.setColor(new Color(0xFAAA32));
                 g.fillRect(6, -4, 10, 8);
                 break;
-            case PIPE:
-                if (s.length() <= 0)
-                    throw new IllegalArgumentException("Pipe length must be positive: " + s.length());
+            case CLOUD:
+                // Нижний слой
+                g.setColor(new Color(0xCC7FA9BB, true));
+                g.fillOval(0, 35, 40, 20);
+                g.fillOval(30, 30, 50, 25);
+                g.fillOval(55, 30, 35, 25);
 
-                g.setColor(new Color(0x005000));
-                g.fillRect(0, 0, 56, 40);
+                // Средний слой
+                g.setColor(new Color(0xE6C8E0EB, true));
+                g.fillOval(5, 15, 45, 32);
+                g.fillOval(25, 12, 50, 35);
+                g.fillOval(55, 20, 35, 30);
 
-                g.setColor(new Color(0x00A000));
-                g.fillRect(3, 0, 50, s.length());
-                break;
-            case BACKGROUND:
-                if (s.length() <= 0)
-                    throw new IllegalArgumentException("Background length must be positive: " + s.length());
-
-                g.setColor(new Color(0x4CBDFD));
-                g.fillRect(0, 0, s.length(),0);
+                // Верхний слой
+                g.setColor(new Color(0xFFFFFFFF, true));
+                g.fillOval(15, 8, 40, 28);
+                g.fillOval(35, 0, 40, 28);
+                g.fillOval(55, 10, 30, 20);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown sprite type: " + s.spriteType());

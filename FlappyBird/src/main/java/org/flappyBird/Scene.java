@@ -85,7 +85,8 @@ public class Scene
             snapshotBuffer = activeBuffer;
             activeBuffer = temp;
 
-            renderSnapshot = snapshotBuffer;
+            // Публикуем неизменяемую копию для EDT, чтобы избежать ConcurrentModificationException
+            renderSnapshot = new ArrayList<>(snapshotBuffer);
             SwingUtilities.invokeLater(view::repaint);
 
             long elapsedNanos = System.nanoTime() - lastTime;
