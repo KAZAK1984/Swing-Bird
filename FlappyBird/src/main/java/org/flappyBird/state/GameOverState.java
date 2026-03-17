@@ -1,5 +1,6 @@
 package org.flappyBird.state;
 
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class GameOverState implements IState
     }
 
     @Override
-    public void update(double deltaMillis)
+    public void update(double deltaMillis, InputSnapshot input)
     {
         // TODO: логика меню конца игры
         //  при повторе: изменить мейн состояние на PlayingState

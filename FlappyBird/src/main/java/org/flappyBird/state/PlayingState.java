@@ -1,5 +1,7 @@
 package org.flappyBird.state;
 
+import org.flappyBird.input.GameAction;
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 
 import java.util.List;
@@ -26,9 +28,12 @@ public class PlayingState implements IState
     }
 
     @Override
-    public void update(double deltaMillis)
+    public void update(double deltaMillis, InputSnapshot input)
     {
-        birdY += (int)(0.5 * deltaMillis);
+        if (input.isJustPressed(GameAction.FLAP))
+            birdY = Math.max(0, birdY - 50);
+
+        birdY += (int)(0.2 * deltaMillis);
         // TODO: логика игры
         //  при проигрыше: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном GameOverSubState через это состояние
         //  при паузе: "заморозить" рендеринг, изменить subState, а далее работать с саб-окном PauseSubState через это состояние

@@ -1,8 +1,11 @@
 package org.flappyBird;
 
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 import org.flappyBird.state.MenuState;
 import org.flappyBird.state.StateController;
+import org.flappyBird.input.InputPoller;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +17,7 @@ public class Scene
     private static final int TARGET_FPS = 120;
     private static final long OPTIMAL_NANOS = 1_000_000_000L / TARGET_FPS;
 
+    private final InputPoller inputPoller;
     private final StateController stateController;
     private final MasterRenderer masterRenderer;
     private final JPanel view;
@@ -24,11 +28,12 @@ public class Scene
     private List<IRenderCmd> activeBuffer = new ArrayList<>(50);
     private List<IRenderCmd> snapshotBuffer = new ArrayList<>(50);
 
-    public Scene()
+    public Scene(InputPoller inputPoller)
     {
         masterRenderer = new MasterRenderer();
         stateController = new StateController();
         stateController.pushState(new MenuState(stateController));
+        this.inputPoller = inputPoller;
 
         view = new JPanel()
         {
@@ -67,10 +72,12 @@ public class Scene
             lastTime = now;
             double deltaMillis = deltaNanos / 1_000_000;
 
+            InputSnapshot frameInput = inputPoller.poll();
+
             synchronized (stateController)
             {
                 activeBuffer.clear();
-                stateController.update(deltaMillis);
+                stateController.update(deltaMillis, frameInput);
                 stateController.buildFrame(activeBuffer, view.getWidth(), view.getHeight());
             }
 

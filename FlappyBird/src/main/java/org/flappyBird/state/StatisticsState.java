@@ -1,5 +1,6 @@
 package org.flappyBird.state;
 
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class StatisticsState implements IState
     }
 
     @Override
-    public void update(double deltaMillis)
+    public void update(double deltaMillis, InputSnapshot input)
     {
         // TODO: Вывод статистики
         //  при выходе: мягко перезапустить рендеринг родителя без потери данных, изменить subState в нём на NONE

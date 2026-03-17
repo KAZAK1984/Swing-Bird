@@ -1,5 +1,6 @@
 package org.flappyBird.state;
 
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.IRenderCmd;
 
 import java.util.ArrayDeque;
@@ -34,12 +35,12 @@ public class StateController
         }
     }
 
-    public void update(double deltaMillis)
+    public void update(double deltaMillis, InputSnapshot input)
     {
         IState current = states.peek();
         if (current != null)
         {
-            current.update(deltaMillis);
+            current.update(deltaMillis, input);
         }
     }
 

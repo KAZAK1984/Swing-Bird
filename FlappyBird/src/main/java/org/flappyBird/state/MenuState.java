@@ -1,5 +1,7 @@
 package org.flappyBird.state;
 
+import org.flappyBird.input.GameAction;
+import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 
 import java.util.List;
@@ -20,14 +22,19 @@ public class MenuState implements IState
     @Override public void onExit()
     {
         // TODO: очистка
+
+        controller.setState(new PlayingState(controller));
     }
 
     @Override
-    public void update(double deltaMillis)
+    public void update(double deltaMillis, InputSnapshot input)
     {
         // TODO: логика меню
         //  при нажатии на "Старт": controller.setState(new PlayingState(controller));
         //  при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
+
+        if (input.isJustPressed(GameAction.FLAP))
+            onExit();
     }
 
     @Override
