@@ -37,13 +37,34 @@ public class MasterRenderer
         g.translate(s.x(), s.y());
         g.rotate(s.rotationRadians());
 
-        if (s.spriteId() == 1)
+        switch (s.spriteType())
         {
-            g.setColor(new Color(0xFFE178));
-            g.fillRect(-14, -10, 28, 20);
+            case BIRD:
+                g.setColor(new Color(0xFFE178));
+                g.fillRect(-14, -10, 28, 20);
 
-            g.setColor(new Color(0xFAAA32));
-            g.fillRect(6, -4, 10, 8);
+                g.setColor(new Color(0xFAAA32));
+                g.fillRect(6, -4, 10, 8);
+                break;
+            case PIPE:
+                if (s.length() <= 0)
+                    throw new IllegalArgumentException("Pipe length must be positive: " + s.length());
+
+                g.setColor(new Color(0x005000));
+                g.fillRect(0, 0, 56, 40);
+
+                g.setColor(new Color(0x00A000));
+                g.fillRect(3, 0, 50, s.length());
+                break;
+            case BACKGROUND:
+                if (s.length() <= 0)
+                    throw new IllegalArgumentException("Background length must be positive: " + s.length());
+
+                g.setColor(new Color(0x4CBDFD));
+                g.fillRect(0, 0, s.length(),0);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown sprite type: " + s.spriteType());
         }
 
         g.setTransform(old);

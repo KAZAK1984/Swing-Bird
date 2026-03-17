@@ -21,9 +21,8 @@ public class MenuState implements IState
     }
     @Override public void onExit()
     {
-        // TODO: очистка
-
         controller.setState(new PlayingState(controller));
+        // TODO: очистка
     }
 
     @Override
