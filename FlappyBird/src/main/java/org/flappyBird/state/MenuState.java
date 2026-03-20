@@ -1,8 +1,6 @@
 package org.flappyBird.state;
 
-import org.flappyBird.component.BuildingParallax;
-import org.flappyBird.component.CloudParallax;
-import org.flappyBird.component.GroundParallax;
+import org.flappyBird.component.FullParallax;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
@@ -12,9 +10,7 @@ import java.util.List;
 public class MenuState implements IState
 {
     private final StateController controller;
-    private final CloudParallax clouds = new CloudParallax();
-    private final BuildingParallax buildings = new BuildingParallax();
-    private final GroundParallax ground = new GroundParallax();
+    private final FullParallax parallax = new FullParallax();
 
     public MenuState(StateController controller)
     {
@@ -38,9 +34,7 @@ public class MenuState implements IState
         //  при нажатии на "Старт": controller.setState(new PlayingState(controller));
         //  при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
 
-        clouds.update(deltaMillis);
-        buildings.update(deltaMillis);
-        ground.update(deltaMillis);
+        parallax.update(deltaMillis);
 
         if (input.isJustPressed(GameAction.FLAP))
             onExit();
@@ -50,8 +44,6 @@ public class MenuState implements IState
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
         buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
-        clouds.render(buffer, canvasWidth, canvasHeight);
-        buildings.render(buffer, canvasWidth, canvasHeight);
-        ground.render(buffer, canvasWidth, canvasHeight);
+        parallax.render(buffer, canvasWidth, canvasHeight);
     }
 }

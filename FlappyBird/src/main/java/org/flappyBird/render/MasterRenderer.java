@@ -6,8 +6,19 @@ import java.util.List;
 
 public class MasterRenderer
 {
-    public void renderFrame(Graphics2D g, List<IRenderCmd> commands)
+    public static final int VIRTUAL_HEIGHT = 600;
+
+    public void renderFrame(Graphics2D g, int screenWidth, int screenHeight, List<IRenderCmd> commands)
     {
+        double scale = (double) screenHeight / VIRTUAL_HEIGHT;
+
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, screenWidth, screenHeight);
+
+        AffineTransform originalTransform = g.getTransform();
+
+        g.scale(scale, scale);
+
         for (IRenderCmd cmd : commands)
         {
             switch (cmd)
@@ -17,6 +28,8 @@ public class MasterRenderer
                 case CmdSprite s -> drawSprite(g, s);
             }
         }
+
+        g.setTransform(originalTransform);
     }
 
     private void drawRect(Graphics2D g, CmdRect r)

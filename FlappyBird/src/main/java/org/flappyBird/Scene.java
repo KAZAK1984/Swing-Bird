@@ -6,7 +6,6 @@ import org.flappyBird.state.MenuState;
 import org.flappyBird.state.StateController;
 import org.flappyBird.input.InputPoller;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class Scene
             protected void paintComponent(Graphics g)
             {
                 super.paintComponent(g);
-                masterRenderer.renderFrame((Graphics2D) g, renderSnapshot);
+                masterRenderer.renderFrame((Graphics2D) g, view.getWidth(), view.getHeight(), renderSnapshot);
             }
         };
     }
@@ -78,7 +77,14 @@ public class Scene
             {
                 activeBuffer.clear();
                 stateController.update(deltaMillis, frameInput);
-                stateController.buildFrame(activeBuffer, view.getWidth(), view.getHeight());
+
+                int height = view.getHeight();
+                if (height == 0)
+                    continue; // Пропускаем кадр, пока Swing не инициализировал холст
+                double scale = (double) height / MasterRenderer.VIRTUAL_HEIGHT;
+                int dynamicVirtualWidth = (int) Math.ceil(view.getWidth() / scale);
+
+                stateController.buildFrame(activeBuffer, dynamicVirtualWidth, MasterRenderer.VIRTUAL_HEIGHT);
             }
 
             List<IRenderCmd> temp = snapshotBuffer;

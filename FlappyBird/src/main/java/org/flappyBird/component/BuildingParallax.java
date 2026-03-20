@@ -5,30 +5,27 @@ import org.flappyBird.render.IRenderCmd;
 
 import java.util.List;
 
-/**
- * Параллакс-слой зданий: повторяемый узор и ограничение подряд идущих одинаковых паттернов.
- */
-public class BuildingParallax
+public class BuildingParallax implements IParallaxLayer
 {
     private static final int BUILDING_WIDTH = 60;
     private static final float SPEED_PX_PER_SEC = 45f;
 
     // Паттерн: высота (0 = пропуск/нет здания)
     private static final int[] HEIGHT_PATTERN =
-    {
-            120, 150, 0, 170, 140, 0, 160, 130,      // блок 1
-            145, 165, 0, 135, 155, 0, 175, 125,      // блок 2
-            138, 158, 0, 148, 168, 0, 142, 152       // блок 3
-    };
+            {
+                    120, 150, 0, 170, 140, 0, 160, 130,      // блок 1
+                    145, 165, 0, 135, 155, 0, 175, 125,      // блок 2
+                    138, 158, 0, 148, 168, 0, 142, 152       // блок 3
+            };
     private static final int[] COLOR_PATTERN =
-    {
-            0x8FA5B5, 0x7F95A5, 0x0, 0x9FB5C5,        // блок 1
-            0x8FA5B5, 0x0, 0x95ADB8, 0x85959F,
-            0x8DB3C3, 0x7D93A3, 0x0, 0x9DAABC,        // блок 2
-            0x8DB3C3, 0x0, 0x93A8B6, 0x83939D,
-            0x8FA9BD, 0x7F9BAD, 0x0, 0x9FB9CD,        // блок 3
-            0x8FA9BD, 0x0, 0x95B1BA, 0x859196
-    };
+            {
+                    0x8FA5B5, 0x7F95A5, 0x0, 0x9FB5C5,        // блок 1
+                    0x8FA5B5, 0x0, 0x95ADB8, 0x85959F,
+                    0x8DB3C3, 0x7D93A3, 0x0, 0x9DAABC,        // блок 2
+                    0x8DB3C3, 0x0, 0x93A8B6, 0x83939D,
+                    0x8FA9BD, 0x7F9BAD, 0x0, 0x9FB9CD,        // блок 3
+                    0x8FA9BD, 0x0, 0x95B1BA, 0x859196
+            };
     private static final int PATTERN_LENGTH = HEIGHT_PATTERN.length;
     private static final int PATTERN_PERIOD = BUILDING_WIDTH * PATTERN_LENGTH;
 
@@ -38,6 +35,7 @@ public class BuildingParallax
 
     private double parallaxShift = 0;
 
+    @Override
     public void update(double deltaMillis)
     {
         parallaxShift += SPEED_PX_PER_SEC * deltaMillis / 1000.0;
@@ -48,22 +46,19 @@ public class BuildingParallax
             parallaxShift += PATTERN_PERIOD;
     }
 
+    @Override
     public void render(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
-        int groundHeight = GroundParallax.resolveGroundHeight(canvasHeight);
-        double heightScale = clamp(canvasHeight / 480.0);
-
-        int baseY = canvasHeight - groundHeight;
+        int baseY = canvasHeight - GroundParallax.GROUND_HEIGHT;
         int startX = -BUILDING_WIDTH;
         int endX = canvasWidth + BUILDING_WIDTH;
 
         for (int worldX = startX; worldX < endX + parallaxShift; worldX += BUILDING_WIDTH)
         {
             int idx = mod(worldX / BUILDING_WIDTH);
-            int height = (int) (HEIGHT_PATTERN[idx] * heightScale);
+            int height = HEIGHT_PATTERN[idx];
 
-            if (height == 0)
-                continue; // пропуск - нет здания
+            if (height == 0) continue;
 
             int color = COLOR_PATTERN[idx];
             int x = (int) (worldX - parallaxShift);
@@ -86,7 +81,6 @@ public class BuildingParallax
             for (int col = 0; col < cols; col++)
             {
                 int wx = x + WINDOW_GAP + col * (WINDOW_SIZE + WINDOW_GAP);
-
                 buffer.add(new CmdRect(wx, wy, WINDOW_SIZE, WINDOW_SIZE, WINDOW_COLOR));
             }
         }
@@ -94,12 +88,7 @@ public class BuildingParallax
 
     private int mod(int value)
     {
-        int r = value % BuildingParallax.PATTERN_LENGTH;
-        return r < 0 ? r + BuildingParallax.PATTERN_LENGTH : r;
-    }
-
-    private double clamp(double v)
-    {
-        return v < 0.75 ? 0.75 : Math.min(v, 2.1);
+        int r = value % PATTERN_LENGTH;
+        return r < 0 ? r + PATTERN_LENGTH : r;
     }
 }

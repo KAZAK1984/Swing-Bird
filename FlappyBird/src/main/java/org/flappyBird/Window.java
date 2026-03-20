@@ -2,6 +2,7 @@ package org.flappyBird;
 
 import org.flappyBird.input.AwtInputAdapter;
 import org.flappyBird.input.InputPoller;
+import org.flappyBird.render.MasterRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,6 @@ public class Window extends JFrame
     private final Scene scene;
 
     private boolean isFullscreen;
-    private static final int WINDOW_WIDTH = 900;
-    private static final int WINDOW_HEIGHT = 600;
 
     public Window()
     {
@@ -41,8 +40,8 @@ public class Window extends JFrame
         scene = new Scene(inputPoller);
         JComponent view = scene.getView();
 
+        view.setPreferredSize(new Dimension(800, MasterRenderer.VIRTUAL_HEIGHT));
         setResizable(false);
-        view.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         add(view, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
@@ -52,19 +51,27 @@ public class Window extends JFrame
     {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
+        var isVisible = isDisplayable();
+        if (isVisible)
+            dispose();
+
         if (isFullscreen)
         {
+            setUndecorated(false);
             gd.setFullScreenWindow(null);
-            setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
             setLocationRelativeTo(null);
             isFullscreen = false;
         }
         else
         {
-            setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+            setUndecorated(true);
+            setSize(800, MasterRenderer.VIRTUAL_HEIGHT);
             gd.setFullScreenWindow(this);
             isFullscreen = true;
         }
+
+        if (isVisible)
+            setVisible(true);
 
         revalidate();
         repaint();
