@@ -23,21 +23,18 @@ public class MenuState implements IState
     }
     @Override public void onExit()
     {
-        controller.setState(new PlayingState(controller));
         // TODO: очистка
     }
 
     @Override
     public void update(double deltaMillis, InputSnapshot input)
     {
-        // TODO: логика меню
-        //  при нажатии на "Старт": controller.setState(new PlayingState(controller));
-        //  при нажатии на "Статистика": "заморозить" рендеринг, изменить subState, а далее работать с саб-окном StatisticsSubState через это состояние
-
         parallax.update(deltaMillis);
 
         if (input.isJustPressed(GameAction.FLAP))
-            onExit();
+        {
+            controller.setState(new PlayingState(controller));  // TODO: Убрать костыль в onEnter()/onExit()
+        }
     }
 
     @Override
