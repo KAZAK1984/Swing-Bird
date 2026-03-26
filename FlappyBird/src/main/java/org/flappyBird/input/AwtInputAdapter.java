@@ -20,10 +20,14 @@ public class AwtInputAdapter extends KeyAdapter
         keyMap.put(KeyEvent.VK_ENTER, GameAction.UI_CONFIRM);
 
         keyMap.put(KeyEvent.VK_W, GameAction.UI_UP);
+        keyMap.put(KeyEvent.VK_A, GameAction.UI_UP);
         keyMap.put(KeyEvent.VK_S, GameAction.UI_DOWN);
+        keyMap.put(KeyEvent.VK_D, GameAction.UI_DOWN);
 
         keyMap.put(KeyEvent.VK_UP, GameAction.UI_UP);
+        keyMap.put(KeyEvent.VK_LEFT, GameAction.UI_UP);
         keyMap.put(KeyEvent.VK_DOWN, GameAction.UI_DOWN);
+        keyMap.put(KeyEvent.VK_RIGHT, GameAction.UI_DOWN);
     }
 
     @Override
