@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GroundParallax implements IParallaxLayer
 {
-    public static final int GROUND_HEIGHT = 110; // Фиксированная константа!
+    public static final int GROUND_HEIGHT = 110;
 
     private static final int GROUND_COLOR = 0x8B5A2B;
     private static final int GRASS_COLOR = 0x58B957;

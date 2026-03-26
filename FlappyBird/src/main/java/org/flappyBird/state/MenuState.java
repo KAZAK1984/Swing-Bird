@@ -10,11 +10,17 @@ import java.util.List;
 public class MenuState implements IState
 {
     private final StateController controller;
-    private final FullParallax parallax = new FullParallax();
+    private final FullParallax parallax;
+
+    public MenuState(StateController controller, FullParallax parallax)
+    {
+        this.controller = controller;
+        this.parallax = parallax;
+    }
 
     public MenuState(StateController controller)
     {
-        this.controller = controller;
+        this(controller, new FullParallax());
     }
 
     @Override public void onEnter()
@@ -31,9 +37,9 @@ public class MenuState implements IState
     {
         parallax.update(deltaMillis);
 
-        if (input.isJustPressed(GameAction.FLAP))
+        if (input.isJustPressed(GameAction.PAUSE))
         {
-            controller.setState(new PlayingState(controller));  // TODO: Убрать костыль в onEnter()/onExit()
+            controller.setState(new PlayingState(controller, parallax));  // TODO: Убрать костыль в onEnter()/onExit()
         }
     }
 

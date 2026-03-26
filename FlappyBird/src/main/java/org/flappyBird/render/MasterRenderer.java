@@ -47,19 +47,51 @@ public class MasterRenderer
     private void drawSprite(Graphics2D g, CmdSprite s)
     {
         AffineTransform old = g.getTransform();
-        g.translate(s.x(), s.y());
-        g.rotate(s.rotationRadians());
+
+        if (s.spriteType() == SpriteType.BIRD)
+        {
+            // Птица вращается вокруг своего центра
+            g.translate(s.x() + 17, s.y() + 12);
+            g.rotate(s.rotationRadians());
+            g.translate(-17, -12);
+        }
+        else
+        {
+            g.translate(s.x(), s.y());
+            g.rotate(s.rotationRadians());
+        }
 
         switch (s.spriteType())
         {
             case BIRD:
-                // Тело
-                g.setColor(new Color(0xFFE178));
-                g.fillRect(-14, -10, 28, 20);
+                // Тело птицы
+                g.setColor(new Color(0xF7DF59));
+                g.fillRect(3, 6, 20, 14);
+                g.fillRect(6, 3, 12, 4);
+                g.fillRect(2, 10, 4, 6);
+
+                g.setColor(new Color(0xFFE97A));
+                g.fillRect(8, 4, 8, 3);
+
+                g.setColor(new Color(0xE7C948));
+                g.fillRect(6, 18, 15, 3);
+
+                g.setColor(new Color(0xF2C94C));
+                g.fillRect(9, 10, 9, 6);
+                g.setColor(new Color(0xE6B93E));
+                g.fillRect(11, 12, 5, 2);
+
+                // Глаз
+                g.setColor(new Color(0xFFFFFF));
+                g.fillRect(15, 8, 4, 4);
+                g.setColor(new Color(0x5B3FA6));
+                g.fillRect(17, 9, 2, 2);
 
                 // Клюв
-                g.setColor(new Color(0xFAAA32));
-                g.fillRect(6, -4, 10, 8);
+                g.setColor(new Color(0xD93B2B));
+                g.fillRect(22, 11, 10, 7);
+                g.setColor(new Color(0xEF4A35));
+                g.fillRect(22, 11, 8, 3);
                 break;
             case CLOUD:
                 // Нижний слой

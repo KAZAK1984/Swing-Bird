@@ -9,12 +9,11 @@ public class Pipe extends Entity
 {
     private static final int WIDTH = 52;
     private static final int SPEED = 3;
-    
-    // Цвета для верхней и нижней трубы
-    private static final int COLOR_GREEN = 0x4CAF50;  // Светло-зелёный
-    private static final int COLOR_CAP = 0x145A18;           // Ещё более тёмный зелёный для "набалдашника"
-    private static final int CAP_HEIGHT = 8;                 // Высота "шапочки"
-    private static final int CAP_WIDTH = WIDTH + 6;          // Чуть шире, чем сама труба
+
+    private static final int COLOR_GREEN = 0x4CAF50;
+    private static final int COLOR_CAP = 0x145A18;
+    private static final int CAP_HEIGHT = 8;
+    private static final int CAP_WIDTH = WIDTH + 6;
 
     private final boolean isTop;
 

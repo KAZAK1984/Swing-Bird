@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class PipeColumn
 {
-    private static final int GAP_SIZE = 150;
+    private static final int GAP_SIZE = 100;
     private static final int COLUMN_WIDTH = 52; // TODO: Заменить костыль на нормальную константу
     
     private final Pipe topPipe;
@@ -24,12 +24,19 @@ public class PipeColumn
 
     public PipeColumn(float x, float gapY)
     {
+        this(x, gapY, 600);
+    }
+
+    public PipeColumn(float x, float gapY, int bottomLimitY)
+    {
         float halfGap = GAP_SIZE / 2.0f;
         float topHeight = gapY - halfGap;
         float bottomY = gapY + halfGap;
 
-        topPipe = new Pipe(x, 0, (int)topHeight, true);
-        bottomPipe = new Pipe(x, bottomY, 500, false);
+        int bottomHeight = Math.max(0, bottomLimitY - (int) bottomY);
+
+        topPipe = new Pipe(x, 0, (int) topHeight, true);
+        bottomPipe = new Pipe(x, bottomY, bottomHeight, false);
     }
 
     public void update(double deltaMillis)
@@ -79,4 +86,3 @@ public class PipeColumn
         return COLUMN_WIDTH;
     }
 }
-
