@@ -66,6 +66,7 @@ public class UIManager
         }
     }
 
+    // TODO: Сделать чистой функцией, что не будет менять состояние изнутри, а только читать и генерировать команды.
     public void changeButtonsBounds(int canvasWidth, int canvasHeight)
     {
         int intervalX = canvasWidth / (buttons.size() * 2 + 1);

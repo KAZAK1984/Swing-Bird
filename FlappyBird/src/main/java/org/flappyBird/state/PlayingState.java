@@ -50,6 +50,7 @@ public class PlayingState implements IState
         // TODO: очистка
     }
 
+    // TODO: Перенос логики в отдельные классы (например, PipeSpawner), чтобы не засорять PlayingState
     @Override
     public void update(double deltaMillis, InputSnapshot input)
     {

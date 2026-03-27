@@ -4,6 +4,18 @@ import java.util.List;
 
 public record InputSnapshot(long currentState, long previousState)
 {
+    private static final GameAction[] ACTIONS = GameAction.values();
+    private static final long ALL_ACTIONS_MASK = buildAllActionsMask();
+
+    private static long buildAllActionsMask()
+    {
+        long mask = 0L;
+        for (GameAction action : ACTIONS)
+            mask |= 1L << action.ordinal();
+
+        return mask;
+    }
+
     public boolean isJustPressed(GameAction action)
     {
         long mask = 1L << action.ordinal();
@@ -17,15 +29,12 @@ public record InputSnapshot(long currentState, long previousState)
     {
         outBuffer.clear();
 
-        if (isJustPressed(GameAction.FLAP))
-            outBuffer.add(GameAction.FLAP);
-        if (isJustPressed(GameAction.PAUSE))
-            outBuffer.add(GameAction.PAUSE);
-        if (isJustPressed(GameAction.UI_UP))
-            outBuffer.add(GameAction.UI_UP);
-        if (isJustPressed(GameAction.UI_DOWN))
-            outBuffer.add(GameAction.UI_DOWN);
-        if (isJustPressed(GameAction.UI_CONFIRM))
-            outBuffer.add(GameAction.UI_CONFIRM);
+        long justPressedMask = (currentState & ~previousState) & ALL_ACTIONS_MASK;
+        for (GameAction action : ACTIONS)
+        {
+            long actionMask = 1L << action.ordinal();
+            if ((justPressedMask & actionMask) != 0)
+                outBuffer.add(action);
+        }
     }
 }
