@@ -12,7 +12,7 @@ public class Bird extends Entity
     private static final float GRAVITY = 0.003f;
     private static final float FLAP_STRENGTH = -0.6f;
     private static final float MAX_UP_TILT = (float) Math.toRadians(-45);
-    private static final float MAX_DOWN_TILT = (float) Math.toRadians(90);
+    private static final float MAX_DOWN_TILT = (float) Math.toRadians(70);
     private static final float TILT_SPEED = 0.006f;
 
     private float velocityY = 0;
@@ -78,7 +78,6 @@ public class Bird extends Entity
         int bw = 23;
         int bh = 15;
 
-        // Сильное падение
         if (velocityY > 0.20f)
         {
             bx = px + 7;
@@ -86,7 +85,6 @@ public class Bird extends Entity
             bw = 20;
             bh = 17;
         }
-        // Лёгкое падение
         else if (velocityY > 0.10f)
         {
             bx = px + 6;
@@ -95,6 +93,7 @@ public class Bird extends Entity
             bh = 16;
         }
 
-        return new Rectangle(bx, by, bw, bh);
+        bounds.setBounds(bx, by, bw, bh);
+        return bounds;
     }
 }

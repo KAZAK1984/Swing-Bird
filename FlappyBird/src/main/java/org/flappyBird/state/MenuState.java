@@ -1,12 +1,12 @@
 package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
+import org.flappyBird.component.GroundParallax;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.CmdRect;
 import org.flappyBird.render.IRenderCmd;
 import org.flappyBird.component.UIButton;
 import org.flappyBird.component.UIManager;
-import org.flappyBird.render.MasterRenderer;
 
 import java.util.List;
 
@@ -14,7 +14,6 @@ public class MenuState implements IState
 {
     private final StateController controller;
     private final FullParallax parallax;
-
     private final UIManager uiManager = new UIManager();
 
     public MenuState(StateController controller, FullParallax parallax)
@@ -30,11 +29,10 @@ public class MenuState implements IState
 
     @Override public void onEnter()
     {
-        // Числа затычки для избежания возможных ошибок при неправильной отрисовке
-        // Адекватное расположение кнопок будет выполнено в buildFrame
-        uiManager.addButton(new UIButton(100, 2 * (MasterRenderer.VIRTUAL_HEIGHT / 3), 100, 100, "PLAY", this::startGame));
-        uiManager.addButton(new UIButton(300, 2 * (MasterRenderer.VIRTUAL_HEIGHT / 3), 100, 100, "STATISTICS", this::openStats));
-        uiManager.addButton(new UIButton(500, 2 * (MasterRenderer.VIRTUAL_HEIGHT / 3), 100, 100, "EXIT", this::exitGame));
+        // Инициализируем кнопки нулями, их размеры будут установлены в buildFrame() в зависимости от размера окна
+        uiManager.addButton(new UIButton(0, 0, 0, 0, "PLAY", this::startGame));
+        uiManager.addButton(new UIButton(0, 0, 0, 0, "STATISTICS", this::openStats));
+        uiManager.addButton(new UIButton(0, 0, 0, 0, "EXIT", this::exitGame));
     }
     @Override public void onExit()
     {
@@ -54,7 +52,7 @@ public class MenuState implements IState
         buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
         parallax.render(buffer, canvasWidth, canvasHeight);
 
-        uiManager.changeButtonsBounds(canvasWidth, canvasHeight);
+        uiManager.changeButtonsBounds(0, canvasHeight - GroundParallax.GROUND_HEIGHT, canvasWidth, GroundParallax.GROUND_HEIGHT);
         uiManager.render(buffer);
     }
 
@@ -67,13 +65,13 @@ public class MenuState implements IState
     private void openStats()
     {
         System.out.println("Opening Statistics...");
-        // controller.pushState(new StatisticsSubState(controller));
+        // TODO: controller.pushState(new StatisticsSubState(controller));
     }
 
     private void exitGame()
     {
         System.out.println("Saving data and exiting...");
-        // saveTelemetryToDisk();
+        // TODO: saveTelemetryToDisk();
         System.exit(0);
     }
 }

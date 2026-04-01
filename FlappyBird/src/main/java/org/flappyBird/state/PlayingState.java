@@ -1,44 +1,23 @@
 package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
-import org.flappyBird.component.GroundParallax;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
-import org.flappyBird.entity.Bird;
 import org.flappyBird.entity.PipeColumn;
+import org.flappyBird.logic.GameWorld;
 import org.flappyBird.render.*;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayingState implements IState
 {
     private final StateController controller;
-    private final FullParallax parallax;
-
-    private final Bird bird;
-    private final List<PipeColumn> pipes = new ArrayList<>();
-
-    private int score = 0;
-    private float pipeSpawnTimer = 0;
-
-    private static final int PIPE_MIN_GAP_Y = 150;
-    private static final int PIPE_MAX_GAP_Y = 350;
+    private final GameWorld world;
 
     public PlayingState(StateController controller, FullParallax parallax)
     {
         this.controller = controller;
-        this.bird = new Bird(120, 200);
-        this.parallax = parallax;
-
-        int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
-        pipes.add(new PipeColumn(400, 200, groundTopY));
-    }
-
-    public PlayingState(StateController controller)
-    {
-        this(controller, new FullParallax());
+        this.world = new GameWorld(parallax);
     }
 
     @Override public void onEnter()
@@ -50,57 +29,24 @@ public class PlayingState implements IState
         // TODO: очистка
     }
 
-    // TODO: Перенос логики в отдельные классы (например, PipeSpawner), чтобы не засорять PlayingState
     @Override
     public void update(double deltaMillis, InputSnapshot input)
     {
-        parallax.update(deltaMillis);
-        bird.update(deltaMillis);
-        pipes.forEach(p -> p.update(deltaMillis));
-        pipes.removeIf(PipeColumn::isExpired);
+        world.update(deltaMillis);
+
+        if (input.isJustPressed(GameAction.PAUSE))
+        {
+            controller.pushState(new PauseState(controller, world.getParallax()));
+            System.out.println("PAUSED");
+        }
 
         if (input.isJustPressed(GameAction.FLAP))
-            bird.flap();
+            world.flapBird();
 
-        Rectangle birdBounds = bird.getBounds();
-
-        if (birdBounds.y >= MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT)
+        if (world.isGameOver())
         {
-            controller.setState(new MenuState(controller, parallax));  // TODO: Убрать костыль в onEnter()/onExit()
-            System.out.println("GAME OVER (FALL)");
-        }
-
-        for (PipeColumn column : pipes)
-        {
-            // Если труба еще далеко справа
-            if (column.getX() > bird.getX() + bird.getWidth())
-                break;
-            
-            // Если мы тут, значит труба где-то в районе птицы
-            if (column.checkCollision(birdBounds))
-            {
-                controller.setState(new MenuState(controller, parallax));  // TODO: Убрать костыль в onEnter()/onExit()
-                System.out.println("GAME OVER");
-            }
-
-            // Проверка начисления очков по центру
-            if (!column.isScored())
-            {
-                if (bird.getX() + (float) bird.getWidth() / 2 > column.getX() + (float) column.getWidth() / 2)
-                {
-                    score++;
-                    column.setScored(true);
-                }
-            }
-        }
-
-        pipeSpawnTimer += (float) deltaMillis;
-        if (pipeSpawnTimer > 2000)
-        {
-            pipeSpawnTimer = 0;
-            int gapY = PIPE_MIN_GAP_Y + (int)(Math.random() * (PIPE_MAX_GAP_Y - PIPE_MIN_GAP_Y));
-            int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
-            pipes.add(new PipeColumn(800, gapY, groundTopY));
+            controller.setState(new MenuState(controller, world.getParallax()));
+            System.out.println("GAME OVER");
         }
     }
 
@@ -108,18 +54,13 @@ public class PlayingState implements IState
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
         buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
-        parallax.render(buffer, canvasWidth, canvasHeight);
+        world.getParallax().render(buffer, canvasWidth, canvasHeight);
 
-        for (PipeColumn p : pipes)
+        for (PipeColumn p : world.getPipes())
             p.render(buffer);
-        bird.render(buffer);
 
-        /*
-        // Хитбокс птицы (для отладки)
-        var bound = bird.getBounds();
-        buffer.add(new CmdRect(bound.x, bound.y, bound.width, bound.height, 0xFF0000)); // TODO: удалить
-        */
+        world.getBird().render(buffer);
 
-        buffer.add(new CmdText("Score: " + score, 20, 30, 0xFFFFFF));
+        buffer.add(new CmdText("Score: " + world.getScore(), 20, 30, 0xFFFFFF));
     }
 }

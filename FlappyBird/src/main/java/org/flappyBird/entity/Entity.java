@@ -7,6 +7,8 @@ import java.util.List;
 
 public abstract class Entity implements IEntity
 {
+    protected final Rectangle bounds = new Rectangle();
+
     protected float x, y;
     protected int width, height;
     protected boolean expired = false;
@@ -36,7 +38,8 @@ public abstract class Entity implements IEntity
     @Override
     public Rectangle getBounds()
     {
-        return new Rectangle((int) x, (int) y, width, height);
+        bounds.setBounds((int) x, (int) y, width, height);
+        return bounds;
     }
 
     @Override

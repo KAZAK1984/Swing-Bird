@@ -9,8 +9,13 @@ import java.util.List;
 
 public class UIManager
 {
+    private static final int MIN_BUTTON_WIDTH = 90;
+    private static final int MAX_BUTTON_WIDTH = 260;
+    private static final int MIN_BUTTON_HEIGHT = 28;
+    private static final int MAX_BUTTON_HEIGHT = 68;
+
     private final List<UIButton> buttons = new ArrayList<>();
-    private final List<GameAction> actionBuffer = new ArrayList<>(64); // Zero-GC буфер
+    private final List<GameAction> actionBuffer = new ArrayList<>(64);
 
     private int selectedIndex = 0;
 
@@ -66,17 +71,52 @@ public class UIManager
         }
     }
 
-    // TODO: Сделать чистой функцией, что не будет менять состояние изнутри, а только читать и генерировать команды.
-    public void changeButtonsBounds(int canvasWidth, int canvasHeight)
+    public void changeButtonsBounds(int x, int y, int width, int height)
     {
-        int intervalX = canvasWidth / (buttons.size() * 2 + 1);
-        int intervalY = GroundParallax.GROUND_HEIGHT / 3;
-        int posY = canvasHeight - GroundParallax.GROUND_HEIGHT + intervalY;
+        if (buttons.isEmpty()) return;
 
-        for (int i = 0; i < buttons.size(); i++)
+        int count = buttons.size();
+        int slotWidth = Math.max(1, width / count);
+        int rawButtonWidth = Math.max(1, (int) (slotWidth * 0.75));
+        int rawButtonHeight = Math.max(1, (int) (height * 0.6));
+        int buttonWidth = clamp(rawButtonWidth, MIN_BUTTON_WIDTH, Math.min(slotWidth, MAX_BUTTON_WIDTH));
+        int buttonHeight = clamp(rawButtonHeight, MIN_BUTTON_HEIGHT, Math.min(height, MAX_BUTTON_HEIGHT));
+        int offsetY = y + Math.max(0, (height - buttonHeight) / 2);
+
+        for (int i = 0; i < count; i++)
         {
             UIButton btn = buttons.get(i);
-            btn.setBounds(intervalX * (1 + 2 * i), posY, intervalX, intervalY);
+            int slotX = x + i * slotWidth;
+            int offsetX = slotX + Math.max(0, (slotWidth - buttonWidth) / 2);
+            btn.setBounds(offsetX, offsetY, buttonWidth, buttonHeight);
         }
     }
+
+    public void changeButtonsBoundsVertical(int x, int y, int width, int height)
+    {
+        if (buttons.isEmpty()) return;
+
+        int count = buttons.size();
+        int slotHeight = Math.max(1, height / count);
+        int rawButtonWidth = Math.max(1, (int) (width * 0.85));
+        int rawButtonHeight = Math.max(1, (int) (slotHeight * 0.75));
+        int buttonWidth = clamp(rawButtonWidth, MIN_BUTTON_WIDTH, Math.min(width, MAX_BUTTON_WIDTH));
+        int buttonHeight = clamp(rawButtonHeight, MIN_BUTTON_HEIGHT, Math.min(slotHeight, MAX_BUTTON_HEIGHT));
+        int offsetX = x + Math.max(0, (width - buttonWidth) / 2);
+
+        for (int i = 0; i < count; i++)
+        {
+            UIButton btn = buttons.get(i);
+            int slotY = y + i * slotHeight;
+            int offsetY = slotY + Math.max(0, (slotHeight - buttonHeight) / 2);
+            btn.setBounds(offsetX, offsetY, buttonWidth, buttonHeight);
+        }
+    }
+
+    private int clamp(int value, int min, int max)
+    {
+        int upperBound = Math.max(min, max);
+        return Math.max(min, Math.min(value, upperBound));
+    }
+
 }
