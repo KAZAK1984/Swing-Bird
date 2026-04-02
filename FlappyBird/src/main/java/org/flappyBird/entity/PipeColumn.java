@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class PipeColumn
 {
-    private static final int GAP_SIZE = 100;
+    private static final int GAP_SIZE = 120;
     private static final int COLUMN_WIDTH = 52; // TODO: Заменить костыль на нормальную константу
     
     private final Pipe topPipe;
@@ -20,12 +20,6 @@ public class PipeColumn
 
     private boolean scored = false;
     private boolean expired = false;
-
-
-    public PipeColumn(float x, float gapY)
-    {
-        this(x, gapY, 600);
-    }
 
     public PipeColumn(float x, float gapY, int bottomLimitY)
     {
@@ -75,7 +69,6 @@ public class PipeColumn
         this.scored = scored;
     }
 
-    // Методы для оптимизации в цикле (break/continue)
     public float getX()
     {
         return topPipe.getX();

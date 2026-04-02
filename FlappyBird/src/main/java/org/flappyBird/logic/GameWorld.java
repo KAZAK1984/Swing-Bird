@@ -55,7 +55,7 @@ public class GameWorld
     {
         Rectangle birdBounds = bird.getBounds();
 
-        if (birdBounds.y >= MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT)
+        if (birdBounds.y + birdBounds.height >= MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT)
         {
             isGameOver = true;
             return;

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Bird extends Entity
 {
-    private static final float GRAVITY = 0.003f;
+    private static final float GRAVITY = 0.0025f;
     private static final float FLAP_STRENGTH = -0.6f;
     private static final float MAX_UP_TILT = (float) Math.toRadians(-45);
     private static final float MAX_DOWN_TILT = (float) Math.toRadians(70);

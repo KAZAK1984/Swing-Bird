@@ -34,18 +34,18 @@ public class PlayingState implements IState
     {
         world.update(deltaMillis);
 
+        if (input.isJustPressed(GameAction.FLAP))
+            world.flapBird();
+
         if (input.isJustPressed(GameAction.PAUSE))
         {
             controller.pushState(new PauseState(controller, world.getParallax()));
             System.out.println("PAUSED");
         }
 
-        if (input.isJustPressed(GameAction.FLAP))
-            world.flapBird();
-
         if (world.isGameOver())
         {
-            controller.setState(new MenuState(controller, world.getParallax()));
+            controller.pushState(new ResetState(controller, world.getParallax()));
             System.out.println("GAME OVER");
         }
     }
