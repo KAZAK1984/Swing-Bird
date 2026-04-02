@@ -1,12 +1,15 @@
 package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
+import org.flappyBird.component.GroundParallax;
 import org.flappyBird.component.UIButton;
 import org.flappyBird.component.UIManager;
+import org.flappyBird.entity.Bird;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
 
+import java.awt.*;
 import java.util.List;
 
 public class ResetState implements IState
@@ -14,11 +17,15 @@ public class ResetState implements IState
     private final StateController controller;
     private final FullParallax parallax;
     private final UIManager uiManager = new UIManager();
+    private final Bird bird;
 
-    public ResetState (StateController controller, FullParallax parallax)
+    private boolean isBirdOnGround = false;
+
+    public ResetState (StateController controller, FullParallax parallax, Bird bird)
     {
         this.controller = controller;
         this.parallax = parallax;
+        this.bird = bird;
     }
 
     @Override public void onEnter()
@@ -35,6 +42,19 @@ public class ResetState implements IState
     @Override
     public void update(double deltaMillis, InputSnapshot input)
     {
+        if (!isBirdOnGround)
+        {
+            bird.update(deltaMillis);
+
+            Rectangle birdBounds = bird.getBounds();
+            int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
+
+            if (birdBounds.getY() + birdBounds.getHeight() >= groundTopY)
+                isBirdOnGround = true;
+
+            return;
+        }
+
         if (input.isJustPressed(GameAction.PAUSE))
             goToMainMenu();
 
@@ -44,6 +64,9 @@ public class ResetState implements IState
     @Override
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
+        if (!isBirdOnGround)
+            return;
+
         int panelWidth = canvasWidth / 2;
         int panelHeight = canvasHeight / 2;
         int panelX = (canvasWidth - panelWidth) / 2;

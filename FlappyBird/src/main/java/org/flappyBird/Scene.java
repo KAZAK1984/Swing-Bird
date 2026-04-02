@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Scene
 {
-    private static final int TARGET_FPS = 120;
+    private static final int TARGET_FPS = 144;
     private static final long OPTIMAL_NANOS = 1_000_000_000L / TARGET_FPS;
 
     private final InputPoller inputPoller;

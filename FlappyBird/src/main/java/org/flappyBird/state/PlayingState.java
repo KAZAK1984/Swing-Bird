@@ -45,7 +45,7 @@ public class PlayingState implements IState
 
         if (world.isGameOver())
         {
-            controller.pushState(new ResetState(controller, world.getParallax()));
+            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird()));
             System.out.println("GAME OVER");
         }
     }

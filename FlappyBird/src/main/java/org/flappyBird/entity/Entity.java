@@ -21,13 +21,8 @@ public abstract class Entity implements IEntity
         this.height = height;
     }
 
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public void setX(float x) { this.x = x; }
-    public void setY(float y) { this.y = y; }
-
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+     public float getX() { return x; }
+     public void setX(float x) { this.x = x; }
 
     @Override
     public abstract void update(double deltaMillis);

@@ -58,9 +58,4 @@ public class Pipe extends Entity
             buffer.add(new CmdRect(capX, py, CAP_WIDTH, CAP_HEIGHT, COLOR_CAP));
         }
     }
-
-    public boolean isTop()
-    {
-        return isTop;
-    }
 }

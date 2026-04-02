@@ -51,6 +51,12 @@ public class Bird extends Entity
         velocityY = FLAP_STRENGTH;
     }
 
+    public void landAt(float groundTopY)
+    {
+        y = groundTopY - height;
+        velocityY = 0f; // TODO: Необходимо починить резкий сдвиг угла при касании земли таким образом
+    }
+
     private static float clamp(float value)
     {
         return Math.max(Bird.MAX_UP_TILT, Math.min(Bird.MAX_DOWN_TILT, value));

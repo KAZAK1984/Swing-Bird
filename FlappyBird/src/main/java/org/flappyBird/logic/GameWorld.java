@@ -54,16 +54,18 @@ public class GameWorld
     private void checkCollisionsAndScore()
     {
         Rectangle birdBounds = bird.getBounds();
+        int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
 
-        if (birdBounds.y + birdBounds.height >= MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT)
+        if (birdBounds.getY() + birdBounds.getHeight() >= groundTopY)
         {
+            bird.landAt(groundTopY);
             isGameOver = true;
             return;
         }
 
         for (PipeColumn column : pipes)
         {
-            if (column.getX() > bird.getX() + bird.getWidth())
+            if (column.getX() > birdBounds.getX() + birdBounds.getWidth())
                 break;
 
             if (column.checkCollision(birdBounds))
@@ -74,7 +76,7 @@ public class GameWorld
 
             if (!column.isScored())
             {
-                if (bird.getX() + (float) bird.getWidth() / 2 > column.getX() + (float) column.getWidth() / 2)
+                if (birdBounds.getX() + birdBounds.getWidth() / 2 > column.getX() + (float) column.getWidth() / 2)
                 {
                     score++;
                     column.setScored(true);
