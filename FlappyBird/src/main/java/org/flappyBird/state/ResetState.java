@@ -14,12 +14,16 @@ import java.util.List;
 
 public class ResetState implements IState
 {
+    private static final int OUT_TIME = 300;
+
     private final StateController controller;
     private final FullParallax parallax;
     private final UIManager uiManager = new UIManager();
     private final Bird bird;
+    private final long deadTime = System.currentTimeMillis();
 
     private boolean isBirdOnGround = false;
+    private boolean isTimeOut = false;
 
     public ResetState (StateController controller, FullParallax parallax, Bird bird)
     {
@@ -55,6 +59,13 @@ public class ResetState implements IState
             return;
         }
 
+        if (!isTimeOut)
+        {
+            if (System.currentTimeMillis() - deadTime > OUT_TIME)
+                isTimeOut = true;
+            return;
+        }
+
         if (input.isJustPressed(GameAction.PAUSE))
             goToMainMenu();
 
@@ -64,7 +75,7 @@ public class ResetState implements IState
     @Override
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
-        if (!isBirdOnGround)
+        if (!isBirdOnGround || !isTimeOut)
             return;
 
         int panelWidth = canvasWidth / 2;
@@ -76,7 +87,7 @@ public class ResetState implements IState
         buffer.add(new CmdRect(panelX + 4, panelY + 4, panelWidth - 8, 36, 0x1E1E1E));
         buffer.add(new CmdText("GAME OVER", panelX + 20, panelY + 27, 0xFFFFFF));
 
-        uiManager.changeButtonsBoundsVertical(panelX, panelY + 42, panelWidth, panelHeight - 44);
+        uiManager.changeButtonsBoundsVertical(panelX + 15, panelY + 42, panelWidth / 2, panelHeight - 44);
         uiManager.render(buffer);
     }
 

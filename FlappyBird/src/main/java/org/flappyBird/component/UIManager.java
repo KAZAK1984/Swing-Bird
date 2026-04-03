@@ -29,7 +29,8 @@ public class UIManager
 
     public void update(InputSnapshot input)
     {
-        if (buttons.isEmpty()) return;
+        if (buttons.isEmpty())
+            return;
 
         input.getJustPressedActions(actionBuffer);
         for (GameAction action : actionBuffer)
@@ -38,8 +39,9 @@ public class UIManager
             {
                 case UI_DOWN -> selectNext();
                 case UI_UP -> selectPrevious();
-                case UI_CONFIRM -> executeSelected();
-                default -> {}
+                case UI_CONFIRM, FLAP -> executeSelected();
+                default -> {
+                }
             }
         }
     }
@@ -118,5 +120,4 @@ public class UIManager
         int upperBound = Math.max(min, max);
         return Math.max(min, Math.min(value, upperBound));
     }
-
 }

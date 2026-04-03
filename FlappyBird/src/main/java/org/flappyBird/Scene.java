@@ -10,11 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.LockSupport;
 
 public class Scene
 {
     private static final int TARGET_FPS = 144;
     private static final long OPTIMAL_NANOS = 1_000_000_000L / TARGET_FPS;
+    private static final long SLEEP_TOLERANCE_NANOS = 2_000_000L;
 
     private final InputPoller inputPoller;
     private final StateController stateController;
@@ -67,7 +69,7 @@ public class Scene
         while (running)
         {
             long now = System.nanoTime();
-            double  deltaNanos = now - lastTime;
+            double deltaNanos = now - lastTime;
             lastTime = now;
             double deltaMillis = deltaNanos / 1_000_000;
 
@@ -100,17 +102,14 @@ public class Scene
 
             if (sleepNanos > 0)
             {
-                long sleepMillis = (sleepNanos / 1_000_000) - 2;
-                if (sleepMillis > 0)
+                long parkNanos = sleepNanos - SLEEP_TOLERANCE_NANOS;
+                if (parkNanos > 0)
                 {
-                    try
+                    LockSupport.parkNanos(parkNanos);
+                    if (Thread.interrupted())
                     {
-                        Thread.sleep(sleepMillis);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        Thread.currentThread().interrupt();
                         running = false;
+                        return;
                     }
                 }
 
