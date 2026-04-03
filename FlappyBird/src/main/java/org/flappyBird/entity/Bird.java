@@ -54,7 +54,7 @@ public class Bird extends Entity
     public void landAt(float groundTopY)
     {
         y = groundTopY - height;
-        velocityY = 0f; // TODO: Необходимо починить резкий сдвиг угла при касании земли таким образом
+        expired = true;
     }
 
     private static float clamp(float value)
