@@ -2,6 +2,7 @@ package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
 import org.flappyBird.component.GroundParallax;
+import org.flappyBird.component.MedalBadge;
 import org.flappyBird.component.UIButton;
 import org.flappyBird.component.UIManager;
 import org.flappyBird.entity.Bird;
@@ -20,16 +21,18 @@ public class ResetState implements IState
     private final FullParallax parallax;
     private final UIManager uiManager = new UIManager();
     private final Bird bird;
-    private final long deadTime = System.currentTimeMillis();
+    private final MedalBadge medalBadge;
 
+    private float deathTimer = 0;
     private boolean isBirdOnGround = false;
     private boolean isTimeOut = false;
 
-    public ResetState (StateController controller, FullParallax parallax, Bird bird)
+    public ResetState(StateController controller, FullParallax parallax, Bird bird, MedalBadge score)
     {
         this.controller = controller;
         this.parallax = parallax;
         this.bird = bird;
+        this.medalBadge = score;
     }
 
     @Override public void onEnter()
@@ -61,7 +64,8 @@ public class ResetState implements IState
 
         if (!isTimeOut)
         {
-            if (System.currentTimeMillis() - deadTime > OUT_TIME)
+            deathTimer += (float) deltaMillis;
+            if (deathTimer > OUT_TIME)
                 isTimeOut = true;
             return;
         }
@@ -86,6 +90,8 @@ public class ResetState implements IState
         buffer.add(new CmdRect(panelX, panelY, panelWidth, panelHeight, 0x101010));
         buffer.add(new CmdRect(panelX + 4, panelY + 4, panelWidth - 8, 36, 0x1E1E1E));
         buffer.add(new CmdText("GAME OVER", panelX + 20, panelY + 27, 0xFFFFFF));
+
+        medalBadge.render(buffer, panelX + (panelWidth / 2) + 15, panelY + 72, panelWidth / 2 - 50, panelHeight - 104);
 
         uiManager.changeButtonsBoundsVertical(panelX + 15, panelY + 42, panelWidth / 2, panelHeight - 44);
         uiManager.render(buffer);

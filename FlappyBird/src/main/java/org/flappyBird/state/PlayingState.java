@@ -1,6 +1,7 @@
 package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
+import org.flappyBird.component.MedalBadge;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.entity.PipeColumn;
@@ -13,6 +14,9 @@ public class PlayingState implements IState
 {
     private final StateController controller;
     private final GameWorld world;
+
+    private int cachedScore = Integer.MIN_VALUE;
+    private String cachedScoreText = "Score: 0";
 
     public PlayingState(StateController controller, FullParallax parallax)
     {
@@ -45,7 +49,8 @@ public class PlayingState implements IState
 
         if (world.isGameOver())
         {
-            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird()));
+            MedalBadge medalBadge = new MedalBadge(world.getScore());
+            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge));
             System.out.println("GAME OVER");
         }
     }
@@ -53,6 +58,11 @@ public class PlayingState implements IState
     @Override
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
+        int score = world.getScore();
+
+        if (score != cachedScore)
+            refreshScoreCache(score);
+
         buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x4CBDFD));
         world.getParallax().render(buffer, canvasWidth, canvasHeight);
 
@@ -61,6 +71,12 @@ public class PlayingState implements IState
 
         world.getBird().render(buffer);
 
-        buffer.add(new CmdText("Score: " + world.getScore(), 20, 30, 0xFFFFFF));
+        buffer.add(new CmdText(cachedScoreText, 20, 30, 0xFFFFFF));
+    }
+
+    private void refreshScoreCache(int score)
+    {
+        cachedScore = score;
+        cachedScoreText = "Score: " + score;
     }
 }
