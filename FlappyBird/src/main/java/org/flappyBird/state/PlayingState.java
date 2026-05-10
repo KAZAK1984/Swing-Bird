@@ -6,6 +6,7 @@ import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.entity.PipeColumn;
 import org.flappyBird.logic.GameWorld;
+import org.flappyBird.logic.StatsRepository;
 import org.flappyBird.render.*;
 
 import java.util.List;
@@ -14,14 +15,16 @@ public class PlayingState implements IState
 {
     private final StateController controller;
     private final GameWorld world;
+    private final StatsRepository statsRepository;
 
     private int cachedScore = Integer.MIN_VALUE;
     private String cachedScoreText = "Score: 0";
 
-    public PlayingState(StateController controller, FullParallax parallax)
+    public PlayingState(StateController controller, FullParallax parallax, StatsRepository statsRepository)
     {
         this.controller = controller;
         this.world = new GameWorld(parallax);
+        this.statsRepository = statsRepository;
     }
 
     @Override public void onEnter()
@@ -50,7 +53,7 @@ public class PlayingState implements IState
         if (world.isGameOver())
         {
             MedalBadge medalBadge = new MedalBadge(world.getScore());
-            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge));
+            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge, world.getScore(), statsRepository));
             System.out.println("GAME OVER");
         }
     }

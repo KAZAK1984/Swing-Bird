@@ -7,6 +7,7 @@ import org.flappyBird.render.CmdRect;
 import org.flappyBird.render.IRenderCmd;
 import org.flappyBird.component.UIButton;
 import org.flappyBird.component.UIManager;
+import org.flappyBird.logic.StatsRepository;
 
 import java.util.List;
 
@@ -15,16 +16,18 @@ public class MenuState implements IState
     private final StateController controller;
     private final FullParallax parallax;
     private final UIManager uiManager = new UIManager();
+    private final StatsRepository statsRepository;
 
-    public MenuState(StateController controller, FullParallax parallax)
+    public MenuState(StateController controller, FullParallax parallax, StatsRepository statsRepository)
     {
         this.controller = controller;
         this.parallax = parallax;
+        this.statsRepository = statsRepository;
     }
 
-    public MenuState(StateController controller)
+    public MenuState(StateController controller, StatsRepository statsRepository)
     {
-        this(controller, new FullParallax());
+        this(controller, new FullParallax(), statsRepository);
     }
 
     @Override public void onEnter()
@@ -59,13 +62,13 @@ public class MenuState implements IState
     private void startGame()
     {
         System.out.println("Transitioning to PlayingState...");
-        controller.setState(new PlayingState(controller, parallax));
+        controller.setState(new PlayingState(controller, parallax, statsRepository));
     }
 
     private void openStats()
     {
         System.out.println("Opening Statistics...");
-        // TODO: controller.pushState(new StatisticsSubState(controller));
+        controller.pushState(new StatisticsState(controller, statsRepository));
     }
 
     private void exitGame()
