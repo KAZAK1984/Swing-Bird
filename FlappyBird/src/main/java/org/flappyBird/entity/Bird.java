@@ -7,8 +7,7 @@ import org.flappyBird.render.SpriteType;
 import java.awt.*;
 import java.util.List;
 
-public class Bird extends Entity
-{
+public class Bird extends Entity {
     private static final float GRAVITY = 0.0025f;
     private static final float FLAP_STRENGTH = -0.6f;
     private static final float MAX_UP_TILT = (float) Math.toRadians(-45);
@@ -18,19 +17,16 @@ public class Bird extends Entity
     private float velocityY = 0;
     private float renderRotation = 0f;
 
-    public Bird(float x, float y)
-    {
-        super(x, y, 34, 24); 
+    public Bird(float x, float y) {
+        super(x, y, 34, 24);
     }
 
     @Override
-    public void update(double deltaMillis)
-    {
+    public void update(double deltaMillis) {
         velocityY += (float) (GRAVITY * deltaMillis);
         y += (float) (velocityY * deltaMillis);
 
-        if (y < 0)
-        {
+        if (y < 0) {
             y = 0;
             velocityY = 0;
         }
@@ -41,40 +37,34 @@ public class Bird extends Entity
     }
 
     @Override
-    public void render(List<IRenderCmd> buffer)
-    {
+    public void render(List<IRenderCmd> buffer) {
         buffer.add(new CmdSprite(SpriteType.BIRD, Math.round(x), Math.round(y), renderRotation));
     }
 
-    public void flap()
-    {
+    public void flap() {
         velocityY = FLAP_STRENGTH;
     }
 
-    public void landAt(float groundTopY)
-    {
+    public void landAt(float groundTopY) {
         y = groundTopY - height;
+        velocityY = 0f;
         expired = true;
     }
 
-    private static float clamp(float value)
-    {
+    private static float clamp(float value) {
         return Math.max(Bird.MAX_UP_TILT, Math.min(Bird.MAX_DOWN_TILT, value));
     }
 
-    private static float moveTowards(float current, float target, float maxDelta)
-    {
+    private static float moveTowards(float current, float target, float maxDelta) {
         float delta = target - current;
-        if (Math.abs(delta) <= maxDelta)
-        {
+        if (Math.abs(delta) <= maxDelta) {
             return target;
         }
         return current + Math.signum(delta) * maxDelta;
     }
 
     @Override
-    public Rectangle getBounds()
-    {
+    public Rectangle getBounds() {
         int px = Math.round(x);
         int py = Math.round(y);
 
@@ -84,15 +74,12 @@ public class Bird extends Entity
         int bw = 23;
         int bh = 15;
 
-        if (velocityY > 0.20f)
-        {
+        if (velocityY > 0.20f) {
             bx = px + 7;
             by = py + 4;
             bw = 20;
             bh = 17;
-        }
-        else if (velocityY > 0.10f)
-        {
+        } else if (velocityY > 0.10f) {
             bx = px + 6;
             by = py + 4;
             bw = 22;

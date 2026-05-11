@@ -12,18 +12,17 @@ import java.util.List;
  */
 public class PipeColumn
 {
-    private static final int GAP_SIZE = 120;
-    private static final int COLUMN_WIDTH = 52; // TODO: Заменить костыль на нормальную константу
-    
+    private static final int COLUMN_WIDTH = 52;
+
     private final Pipe topPipe;
     private final Pipe bottomPipe;
 
     private boolean scored = false;
     private boolean expired = false;
 
-    public PipeColumn(float x, float gapY, int bottomLimitY)
+    public PipeColumn(float x, float gapY, int gapSize, int bottomLimitY)
     {
-        float halfGap = GAP_SIZE / 2.0f;
+        float halfGap = gapSize / 2.0f;
         float topHeight = gapY - halfGap;
         float bottomY = gapY + halfGap;
 

@@ -27,7 +27,7 @@ public class GameWorld
         this.spawner = new PipeSpawner();
 
         int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
-        pipes.add(new PipeColumn(400, 200, groundTopY));
+        spawner.seedInitialPipes(pipes, groundTopY, bird);
     }
 
     public void update(double deltaMillis)
@@ -41,7 +41,7 @@ public class GameWorld
         pipes.forEach(p -> p.update(deltaMillis));
         pipes.removeIf(PipeColumn::isExpired);
 
-        spawner.update(deltaMillis, pipes);
+        spawner.update(deltaMillis, pipes, bird.getHeight());
         checkCollisionsAndScore();
     }
 

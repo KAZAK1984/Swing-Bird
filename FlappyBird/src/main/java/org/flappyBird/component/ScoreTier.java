@@ -5,10 +5,10 @@ import org.flappyBird.render.SpriteType;
 public enum ScoreTier
 {
     NONE(0, 0x808080, "NONE", null),
-    BRONZE(1, 0xCD7F32, "BRONZE", SpriteType.MEDAL_BRONZE_PLUS),
-    SILVER(2, 0xC0C0C0, "SILVER", SpriteType.MEDAL_SILVER_CLOUD),
-    GOLD(3, 0xFFD700, "GOLD", SpriteType.MEDAL_GOLD_STAR),
-    DIAMOND(4, 0xB9F2FF, "DIAMOND", SpriteType.MEDAL_DIAMOND_BIRD);
+    BRONZE(10, 0xCD7F32, "BRONZE", SpriteType.MEDAL_BRONZE_PLUS),
+    SILVER(20, 0xC0C0C0, "SILVER", SpriteType.MEDAL_SILVER_CLOUD),
+    GOLD(30, 0xFFD700, "GOLD", SpriteType.MEDAL_GOLD_STAR),
+    DIAMOND(40, 0xB9F2FF, "DIAMOND", SpriteType.MEDAL_DIAMOND_BIRD);
 
     private final int minScore;
     private final int color;

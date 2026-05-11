@@ -1,7 +1,5 @@
 package org.flappyBird.state;
 
-import org.flappyBird.component.UIButton;
-import org.flappyBird.component.UIManager;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.logic.RunEntry;
@@ -21,10 +19,10 @@ import java.util.List;
 public class StatisticsState implements IState
 {
     private static final int MAX_LINES = 10;
+    private static final int CHAR_WIDTH = 6;
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final StateController controller;
-    private final UIManager uiManager = new UIManager();
     private final StatsRepository statsRepository;
 
     private List<String> cachedLines = new ArrayList<>();
@@ -38,46 +36,47 @@ public class StatisticsState implements IState
 
     @Override public void onEnter()
     {
-        uiManager.addButton(new UIButton(0, 0, 0, 0, "BACK", this::close));
         refreshStats();
     }
 
     @Override
     public void update(double deltaMillis, InputSnapshot input)
     {
-        if (input.isJustPressed(GameAction.PAUSE))
+        if (input.isJustPressed(GameAction.PAUSE) || input.isJustPressed(GameAction.UI_CONFIRM))
         {
+            System.out.println("Exiting StatisticsState...");
             close();
-            return;
         }
-
-        uiManager.update(input);
     }
 
     @Override
     public void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight)
     {
-        buffer.add(new CmdRect(0, 0, canvasWidth, canvasHeight, 0x101010));
-
-        int panelWidth = (int) (canvasWidth * 0.7f);
-        int panelHeight = (int) (canvasHeight * 0.7f);
+        int panelWidth = canvasWidth / 2;
+        int panelHeight = canvasHeight / 2;
         int panelX = (canvasWidth - panelWidth) / 2;
         int panelY = (canvasHeight - panelHeight) / 2;
 
-        buffer.add(new CmdRect(panelX, panelY, panelWidth, panelHeight, 0x1E1E1E));
+        buffer.add(new CmdRect(panelX, panelY, panelWidth, panelHeight, 0x101010));
+        buffer.add(new CmdRect(panelX + 4, panelY + 4, panelWidth - 8, 36, 0x1E1E1E));
 
-        int textX = panelX + 20;
-        int textY = panelY + 28;
-        buffer.add(new CmdText("STATISTICS", textX, textY, 0xFFFFFF));
-        buffer.add(new CmdText("Max score: " + maxScore, textX, textY + 22, 0xFFFFFF));
-        buffer.add(new CmdText("Recent runs:", textX, textY + 44, 0xFFFFFF));
+        String title = "STATISTICS";
+        int titleY = panelY + 27;
+        buffer.add(new CmdText(title, getCenteredTextX(title, panelX, panelWidth), titleY, 0xFFFFFF));
 
-        int lineY = textY + 66;
+        int textY = panelY + 60;
+        String maxScoreLine = "Max score: " + maxScore;
+        buffer.add(new CmdText(maxScoreLine, getCenteredTextX(maxScoreLine, panelX, panelWidth), textY, 0xFFFFFF));
+
+        String recentRunsLine = "Recent runs:";
+        buffer.add(new CmdText(recentRunsLine, getCenteredTextX(recentRunsLine, panelX, panelWidth), textY + 22, 0xFFFFFF));
+
+        int lineY = textY + 44;
         for (int i = 0; i < cachedLines.size(); i++)
-            buffer.add(new CmdText(cachedLines.get(i), textX, lineY + i * 18, 0xFFFFFF));
-
-        uiManager.changeButtonsBounds(panelX, panelY + panelHeight - 50, panelWidth, 40);
-        uiManager.render(buffer);
+        {
+            String line = cachedLines.get(i);
+            buffer.add(new CmdText(line, getCenteredTextX(line, panelX, panelWidth), lineY + i * 18, 0xFFFFFF));
+        }
     }
 
     private void refreshStats()
@@ -98,17 +97,23 @@ public class StatisticsState implements IState
         for (int i = 0; i < count; i++)
         {
             RunEntry run = data.getRuns().get(i);
-            cachedLines.add(formatRunLine(i + 1, run));
+            cachedLines.add(formatRunLine(run));
         }
 
         if (cachedLines.isEmpty())
             cachedLines.add("No runs yet");
     }
 
-    private String formatRunLine(int index, RunEntry run)
+    private String formatRunLine(RunEntry run)
     {
         String time = formatTimestamp(run.timestamp());
-        return index + ") Score: " + run.score() + "  " + time;
+        return time + "   |   " + "Score: " + run.score();
+    }
+
+    private int getCenteredTextX(String text, int panelX, int panelWidth)
+    {
+        int textWidth = text.length() * CHAR_WIDTH;
+        return panelX + (panelWidth - textWidth) / 2;
     }
 
     private String formatTimestamp(long timestamp)

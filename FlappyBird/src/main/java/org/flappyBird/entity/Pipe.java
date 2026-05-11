@@ -23,6 +23,11 @@ public class Pipe extends Entity
         this.isTop = isTop;
     }
 
+    public static int getSpeed()
+    {
+        return SPEED;
+    }
+
     @Override
     public void update(double deltaMillis)
     {

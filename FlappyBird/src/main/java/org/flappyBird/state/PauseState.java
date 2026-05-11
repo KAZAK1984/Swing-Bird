@@ -51,7 +51,7 @@ public class PauseState implements IState
 
         buffer.add(new CmdRect(panelX, panelY, panelWidth, panelHeight, 0x101010));
         buffer.add(new CmdRect(panelX + 4, panelY + 4, panelWidth - 8, 36, 0x1E1E1E));
-        buffer.add(new CmdText("PAUSED", panelX + 20, panelY + 27, 0xFFFFFF));
+        buffer.add(new CmdText("Paused...", panelX + 20, panelY + 27, 0xFFFFFF));
 
         uiManager.changeButtonsBoundsVertical(panelX, panelY + 42, panelWidth, panelHeight - 44);
         uiManager.render(buffer);
@@ -60,18 +60,18 @@ public class PauseState implements IState
     private void resumeGame()
     {
         controller.popState();
-        System.out.println("RESUMED");
+        System.out.println("Resuming game...");
     }
 
     private void restartGame()
     {
         controller.setState(new PlayingState(controller, parallax));
-        System.out.println("RESTARTED");
+        System.out.println("Restarting game...");
     }
 
     private void goToMainMenu()
     {
         controller.setState(new MenuState(controller, parallax));
-        System.out.println("RETURNED TO MENU");
+        System.out.println("Returning to Main Menu...");
     }
 }

@@ -40,14 +40,14 @@ public class PlayingState implements IState
         if (input.isJustPressed(GameAction.PAUSE))
         {
             controller.pushState(new PauseState(controller, world.getParallax()));
-            System.out.println("PAUSED");
+            System.out.println("Paused...");
         }
 
         if (world.isGameOver())
         {
             MedalBadge medalBadge = new MedalBadge(world.getScore());
             controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge));
-            System.out.println("GAME OVER");
+            System.out.println("Game Over! Transitioning to ResetState...");
         }
     }
 

@@ -53,7 +53,10 @@ public class ResetState implements IState
             int groundTopY = MasterRenderer.VIRTUAL_HEIGHT - GroundParallax.GROUND_HEIGHT;
 
             if (birdBounds.getY() + birdBounds.getHeight() >= groundTopY)
+            {
+                bird.landAt(groundTopY);
                 isBirdOnGround = true;
+            }
 
             return;
         }
@@ -96,12 +99,12 @@ public class ResetState implements IState
     private void restartGame()
     {
         controller.setState(new PlayingState(controller, parallax));
-        System.out.println("RESTARTED");
+        System.out.println("Restarting...");
     }
 
     private void goToMainMenu()
     {
         controller.setState(new MenuState(controller, parallax));
-        System.out.println("RETURNED TO MENU");
+        System.out.println("Returning to Main Menu...");
     }
 }
