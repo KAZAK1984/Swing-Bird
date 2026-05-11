@@ -28,10 +28,6 @@ public class PauseState implements IState
         uiManager.addButton(new UIButton(0, 0, 0, 0, "RESTART", this::restartGame));
         uiManager.addButton(new UIButton(0, 0, 0, 0, "MAIN MENU", this::goToMainMenu));
     }
-    @Override public void onExit()
-    {
-        // Пусто: состояние одноразовое и удаляется из стека после выхода.
-    }
 
     @Override
     public void update(double deltaMillis, InputSnapshot input)
@@ -79,4 +75,3 @@ public class PauseState implements IState
         System.out.println("RETURNED TO MENU");
     }
 }
-

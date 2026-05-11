@@ -5,8 +5,8 @@ import org.flappyBird.render.*;
 import org.flappyBird.state.MenuState;
 import org.flappyBird.state.StateController;
 import org.flappyBird.input.InputPoller;
-import org.flappyBird.logic.StatsRepository;
-import org.flappyBird.logic.StatsStore;
+import org.flappyBird.stats.StatsRepository;
+import org.flappyBird.stats.StatsStore;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,9 +34,9 @@ public class Scene
     public Scene(InputPoller inputPoller)
     {
         masterRenderer = new MasterRenderer();
-        stateController = new StateController();
         StatsRepository statsRepository = new StatsStore();
-        stateController.pushState(new MenuState(stateController, statsRepository));
+        stateController = new StateController(statsRepository);
+        stateController.pushState(new MenuState(stateController));
         this.inputPoller = inputPoller;
 
         view = new JPanel()

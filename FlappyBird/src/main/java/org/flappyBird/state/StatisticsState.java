@@ -5,8 +5,8 @@ import org.flappyBird.component.UIManager;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.logic.RunEntry;
-import org.flappyBird.logic.StatsData;
-import org.flappyBird.logic.StatsRepository;
+import org.flappyBird.stats.StatsData;
+import org.flappyBird.stats.StatsRepository;
 import org.flappyBird.render.CmdRect;
 import org.flappyBird.render.CmdText;
 import org.flappyBird.render.IRenderCmd;
@@ -30,20 +30,16 @@ public class StatisticsState implements IState
     private List<String> cachedLines = new ArrayList<>();
     private int maxScore = 0;
 
-    public StatisticsState(StateController controller, StatsRepository statsRepository)
+    public StatisticsState(StateController controller)
     {
         this.controller = controller;
-        this.statsRepository = statsRepository;
+        this.statsRepository = controller.getStatsRepository();
     }
 
     @Override public void onEnter()
     {
         uiManager.addButton(new UIButton(0, 0, 0, 0, "BACK", this::close));
         refreshStats();
-    }
-    @Override public void onExit()
-    {
-        // Данные живут в кеше состояния.
     }
 
     @Override
@@ -86,6 +82,14 @@ public class StatisticsState implements IState
 
     private void refreshStats()
     {
+        if (statsRepository == null)
+        {
+            cachedLines = new ArrayList<>();
+            cachedLines.add("No stats repository");
+            maxScore = 0;
+            return;
+        }
+
         StatsData data = statsRepository.load();
         maxScore = data.getMaxScore();
         cachedLines = new ArrayList<>();

@@ -1,7 +1,8 @@
-package org.flappyBird.logic;
+package org.flappyBird.stats;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.flappyBird.logic.RunEntry;
 
 import java.io.IOException;
 import java.nio.file.AtomicMoveNotSupportedException;
@@ -11,10 +12,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class StatsStore implements StatsRepository
 {
-    private static final int MAX_RUNS = 100;
+    private static final int MAX_RUNS = 10;
     private static final String FILE_NAME = "stats.json";
     private static final String BACKUP_SUFFIX = ".bak";
     private static final String TEMP_SUFFIX = ".tmp";
@@ -35,37 +37,26 @@ public final class StatsStore implements StatsRepository
         String fileName = statsPath.getFileName().toString();
         this.backupPath = statsPath.resolveSibling(fileName + BACKUP_SUFFIX);
         this.tempPath = statsPath.resolveSibling(fileName + TEMP_SUFFIX);
+
+        System.out.println("Stats will be stored at: " + statsPath.toAbsolutePath());
     }
 
     @Override
     public StatsData load()
     {
-        if (!Files.exists(statsPath))
-            return new StatsData();
-
-        try
+        StatsData primary = tryRead(statsPath, "Failed to read stats.json: ");
+        if (primary != null)
         {
-            StatsData data = mapper.readValue(statsPath.toFile(), StatsData.class);
-            normalize(data);
-            return data;
-        }
-        catch (IOException ex)
-        {
-            System.err.println("Failed to read stats.json: " + ex.getMessage());
+            normalize(primary);
+            return primary;
         }
 
-        if (Files.exists(backupPath))
+        StatsData backup = tryRead(backupPath, "Failed to read stats backup: ");
+        if (backup != null)
         {
-            try
-            {
-                StatsData data = mapper.readValue(backupPath.toFile(), StatsData.class);
-                normalize(data);
-                return data;
-            }
-            catch (IOException ex)
-            {
-                System.err.println("Failed to read stats backup: " + ex.getMessage());
-            }
+            normalize(backup);
+            restorePrimaryFromBackup();
+            return backup;
         }
 
         return new StatsData();
@@ -75,7 +66,7 @@ public final class StatsStore implements StatsRepository
     public void recordRun(int score)
     {
         StatsData data = load();
-        data.getRuns().add(0, new RunEntry(score, System.currentTimeMillis()));
+        data.getRuns().addFirst(new RunEntry(score, System.currentTimeMillis()));
         data.setMaxScore(Math.max(data.getMaxScore(), score));
 
         if (data.getRuns().size() > MAX_RUNS)
@@ -88,7 +79,10 @@ public final class StatsStore implements StatsRepository
     {
         try
         {
-            Files.createDirectories(statsPath.getParent());
+            Path parent = statsPath.getParent();
+            if (parent != null)
+                Files.createDirectories(parent);
+
             mapper.writeValue(tempPath.toFile(), data);
 
             if (Files.exists(statsPath))
@@ -130,7 +124,7 @@ public final class StatsStore implements StatsRepository
 
         int observedMax = data.getMaxScore();
         List<RunEntry> runs = data.getRuns();
-        runs.removeIf(run -> run == null);
+        runs.removeIf(Objects::isNull);
 
         for (RunEntry run : runs)
             observedMax = Math.max(observedMax, run.score());
@@ -139,5 +133,38 @@ public final class StatsStore implements StatsRepository
 
         if (runs.size() > MAX_RUNS)
             runs.subList(MAX_RUNS, runs.size()).clear();
+    }
+
+    private StatsData tryRead(Path path, String errorPrefix)
+    {
+        if (!Files.exists(path))
+            return null;
+
+        try
+        {
+            return mapper.readValue(path.toFile(), StatsData.class);
+        }
+        catch (IOException ex)
+        {
+            System.err.println(errorPrefix + ex.getMessage());
+            return null;
+        }
+    }
+
+    private void restorePrimaryFromBackup()
+    {
+        try
+        {
+            Path parent = statsPath.getParent();
+            if (parent != null)
+                Files.createDirectories(parent);
+
+            Files.copy(backupPath, tempPath, StandardCopyOption.REPLACE_EXISTING);
+            moveTempToTarget();
+        }
+        catch (IOException ex)
+        {
+            System.err.println("Failed to restore stats.json from backup: " + ex.getMessage());
+        }
     }
 }

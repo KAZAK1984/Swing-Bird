@@ -2,11 +2,10 @@ package org.flappyBird.state;
 
 import org.flappyBird.component.FullParallax;
 import org.flappyBird.component.MedalBadge;
+import org.flappyBird.entity.PipeColumn;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
-import org.flappyBird.entity.PipeColumn;
 import org.flappyBird.logic.GameWorld;
-import org.flappyBird.logic.StatsRepository;
 import org.flappyBird.render.*;
 
 import java.util.List;
@@ -15,25 +14,19 @@ public class PlayingState implements IState
 {
     private final StateController controller;
     private final GameWorld world;
-    private final StatsRepository statsRepository;
 
     private int cachedScore = Integer.MIN_VALUE;
     private String cachedScoreText = "Score: 0";
 
-    public PlayingState(StateController controller, FullParallax parallax, StatsRepository statsRepository)
+    public PlayingState(StateController controller, FullParallax parallax)
     {
         this.controller = controller;
         this.world = new GameWorld(parallax);
-        this.statsRepository = statsRepository;
     }
 
     @Override public void onEnter()
     {
-        // TODO: инициализация
-    }
-    @Override public void onExit()
-    {
-        // TODO: очистка
+        // Всё инициализируется в конструкторе.
     }
 
     @Override
@@ -53,7 +46,7 @@ public class PlayingState implements IState
         if (world.isGameOver())
         {
             MedalBadge medalBadge = new MedalBadge(world.getScore());
-            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge, world.getScore(), statsRepository));
+            controller.pushState(new ResetState(controller, world.getParallax(), world.getBird(), medalBadge));
             System.out.println("GAME OVER");
         }
     }
@@ -75,6 +68,11 @@ public class PlayingState implements IState
         world.getBird().render(buffer);
 
         buffer.add(new CmdText(cachedScoreText, 20, 30, 0xFFFFFF));
+    }
+
+    public int getScore()
+    {
+        return world.getScore();
     }
 
     private void refreshScoreCache(int score)

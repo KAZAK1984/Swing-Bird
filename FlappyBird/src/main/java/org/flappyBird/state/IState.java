@@ -10,6 +10,5 @@ public interface IState
     void update(double deltaMillis, InputSnapshot input);
     void buildFrame(List<IRenderCmd> buffer, int canvasWidth, int canvasHeight);
     void onEnter();
-    void onExit();
 }
 

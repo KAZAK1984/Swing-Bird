@@ -9,7 +9,6 @@ import org.flappyBird.entity.Bird;
 import org.flappyBird.input.GameAction;
 import org.flappyBird.input.InputSnapshot;
 import org.flappyBird.render.*;
-import org.flappyBird.logic.StatsRepository;
 
 import java.awt.*;
 import java.util.List;
@@ -23,33 +22,24 @@ public class ResetState implements IState
     private final UIManager uiManager = new UIManager();
     private final Bird bird;
     private final MedalBadge medalBadge;
-    private final int score;
-    private final StatsRepository statsRepository;
 
     private float deathTimer = 0;
     private boolean isBirdOnGround = false;
     private boolean isTimeOut = false;
 
-    public ResetState(StateController controller, FullParallax parallax, Bird bird, MedalBadge scoreBadge, int score, StatsRepository statsRepository)
+    public ResetState(StateController controller, FullParallax parallax, Bird bird, MedalBadge scoreBadge)
     {
         this.controller = controller;
         this.parallax = parallax;
         this.bird = bird;
         this.medalBadge = scoreBadge;
-        this.score = score;
-        this.statsRepository = statsRepository;
     }
 
     @Override public void onEnter()
     {
-        statsRepository.recordRun(score);
         // Инициализируем кнопки нулями, их размеры будут установлены в buildFrame() в зависимости от размера окна
         uiManager.addButton(new UIButton(0, 0, 0, 0, "RESTART", this::restartGame));
         uiManager.addButton(new UIButton(0, 0, 0, 0, "MAIN MENU", this::goToMainMenu));
-    }
-    @Override public void onExit()
-    {
-        // Пусто: состояние одноразовое и удаляется из стека после выхода.
     }
 
     @Override
@@ -105,13 +95,13 @@ public class ResetState implements IState
 
     private void restartGame()
     {
-        controller.setState(new PlayingState(controller, parallax, statsRepository));
+        controller.setState(new PlayingState(controller, parallax));
         System.out.println("RESTARTED");
     }
 
     private void goToMainMenu()
     {
-        controller.setState(new MenuState(controller, parallax, statsRepository));
+        controller.setState(new MenuState(controller, parallax));
         System.out.println("RETURNED TO MENU");
     }
 }
